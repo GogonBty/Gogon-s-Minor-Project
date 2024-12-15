@@ -11,6 +11,8 @@
             font-family: 'Lora', serif;
             margin: 0;
             padding: 0;
+            height: 100vh;
+            overflow-y: auto;
         }
 
         h1, h2 {
@@ -29,12 +31,13 @@
         }
 
         .rectangle-window input {
-            width: 90%;
+            width: 100%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
+            box-sizing: border-box;
         }
 
         .button-container {
@@ -53,29 +56,12 @@
             margin: 5px;
             position: relative;
             overflow: hidden;
+            transition: all 0.3s ease;
         }
 
         button:hover {
             background: #34495e;
-            transition: background-color 0.3s;
-        }
-
-        button:hover::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            pointer-events: none;
-            animation: moveHover 1s linear infinite;
-        }
-
-        @keyframes moveHover {
-            0% { transform: scale(0); }
-            50% { transform: scale(1.5); }
-            100% { transform: scale(0); }
+            transform: scale(1.1);
         }
 
         #student-table {
@@ -114,12 +100,63 @@
             font-size: 14px;
             color: #34495e;
         }
+
+        .water-container {
+            width: 80%;
+            height: 30px;
+            background-color: #ddd;
+            margin: 20px auto;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .water {
+            height: 100%;
+            width: 0;
+            background-color: #3498db;
+            border-radius: 10px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: width 1s;
+        }
+
+        .percentage {
+            text-align: center;
+            font-size: 16px;
+            color: #2c3e50;
+            margin-top: 10px;
+        }
+
+        .message-container {
+            text-align: center;
+            margin-top: 20px;
+            color: #2c3e50;
+        }
+
+        .marquee-message {
+            color: green;
+            font-weight: bold;
+        }
+
+        #loading-screen {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            text-align: center;
+            color: white;
+            font-size: 18px;
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
-<marquee>WELCOME TO MY PROJECT 1.0</marquee>
-    <h1>Web Development'24: Minor Project</h1>
-    <h2>Student FORM CRUD App</h2>
+<MARQUEE>WELCOME TO MY PROJECT 1.0</MARQUEE>
+   <b> <h1>Web Development'24: Minor Project</h1></B>
+    <h2>STUDENT FORM C.R.U.D. App </h2>
 
     <div class="rectangle-window">
         <form id="student-form">
@@ -160,7 +197,20 @@
         </tbody>
     </table>
 
+    <div class="message-container">
+        <div class="water-container" id="water-container">
+            <div class="water" id="water"></div>
+        </div>
+
+        <div class="percentage" id="percentage">0%</div>
+        <div id="success-message" class="marquee-message" style="display: none;">The file has been saved in the database.</div>
+    </div>
+
     <div class="credit">- Gogon Basumatary</div>
+
+    <div id="loading-screen" style="display: none;">
+        <div>Loading... <span id="loading-percentage">0%</span></div>
+    </div>
 
     <script>
         const studentForm = document.getElementById('student-form');
@@ -169,6 +219,13 @@
         const degreeInput = document.getElementById('degree');
         const cityInput = document.getElementById('city');
         const studentTable = document.getElementById('student-table').getElementsByTagName('tbody')[0];
+        const waterContainer = document.getElementById('water-container');
+        const water = document.getElementById('water');
+        const percentage = document.getElementById('percentage');
+        const successMessage = document.getElementById('success-message');
+        const loadingScreen = document.getElementById('loading-screen');
+        const loadingPercentage = document.getElementById('loading-percentage');
+        const tickSound = new Audio('https://www.soundjay.com/button/beep-07.wav'); // Ticking sound
 
         document.getElementById('createBtn').addEventListener('click', function() {
             const rollNo = rollNoInput.value;
@@ -177,18 +234,41 @@
             const city = cityInput.value;
 
             if (rollNo && name && degree && city) {
-                const newRow = studentTable.insertRow();
-                newRow.innerHTML = `
-                    <td>${rollNo}</td>
-                    <td>${name}</td>
-                    <td>${degree}</td>
-                    <td>${city}</td>
-                    <td><button class="editBtn">Edit</button><button class="deleteBtn">Delete</button></td>
-                `;
-                rollNoInput.value = '';
-                nameInput.value = '';
-                degreeInput.value = '';
-                cityInput.value = '';
+                let progress = 0;
+                loadingScreen.style.display = 'block'; // Show loading screen
+
+                const interval = setInterval(function() {
+                    progress += 5;
+                    water.style.width = `${progress}%`;
+                    loadingPercentage.textContent = `${progress}%`;
+
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        tickSound.play(); // Play tick sound
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none'; // Hide loading screen
+                        }, 1000);
+
+                        const newRow = studentTable.insertRow();
+                        newRow.innerHTML = `  
+                            <td>${rollNo}</td>
+                            <td>${name}</td>
+                            <td>${degree}</td>
+                            <td>${city}</td>
+                            <td><button class="editBtn">Edit</button><button class="deleteBtn">Delete</button></td>
+                        `;
+
+                        rollNoInput.value = '';
+                        nameInput.value = '';
+                        degreeInput.value = '';
+                        cityInput.value = '';
+
+                        successMessage.style.display = 'block';
+                        setTimeout(function() {
+                            successMessage.style.display = 'none';
+                        }, 3000); // Hide after 3 seconds
+                    }
+                }, 100); // Update progress every 100ms
             } else {
                 alert('Please fill out all fields.');
             }
@@ -235,49 +315,33 @@
                 if (updated) {
                     alert('Record updated successfully.');
                 } else {
-                    alert('Roll No not found.');
+                    alert('Roll number not found.');
                 }
 
                 rollNoInput.value = '';
                 nameInput.value = '';
                 degreeInput.value = '';
                 cityInput.value = '';
-
-                document.getElementById('createBtn').style.display = 'inline-block';
                 document.getElementById('updateBtn').style.display = 'none';
-            } else {
-                alert('Please fill out all fields.');
+                document.getElementById('createBtn').style.display = 'inline-block';
             }
         });
 
         document.getElementById('readBtn').addEventListener('click', function() {
-            const rows = studentTable.rows;
-            if (rows.length > 0) {
-                alert('Records:');
-                for (let row of rows) {
-                    const cells = row.cells;
-                    alert(`Roll No: ${cells[0].textContent}, Name: ${cells[1].textContent}, Degree: ${cells[2].textContent}, City: ${cells[3].textContent}`);
-                }
-            } else {
-                alert('No records available.');
-            }
+            alert('Reading records...');
         });
 
         function searchRecords() {
             const query = document.getElementById('search-bar').value.toLowerCase();
-            const rows = studentTable.getElementsByTagName('tr');
-
-            for (let row of rows) {
-                const cells = row.getElementsByTagName('td');
-                if (cells.length > 0) {
-                    const rollNo = cells[0].textContent.toLowerCase();
-                    const name = cells[1].textContent.toLowerCase();
-
-                    if (rollNo.indexOf(query) !== -1 || name.indexOf(query) !== -1) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
+            const rows = studentTable.rows;
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].cells;
+                const rollNo = cells[0].textContent.toLowerCase();
+                const name = cells[1].textContent.toLowerCase();
+                if (rollNo.includes(query) || name.includes(query)) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
                 }
             }
         }
