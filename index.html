@@ -1,39 +1,95 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Minor Project: CRUD App</title>
-    <link rel="stylesheet" href="/style.css">
+    <title>Gogon Basumatary</title>
     <style>
-        h1 {
-            font-family: 'Lora', serif;
+        body {
+            background-color: lightblue;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
             color: #2c3e50;
             text-align: center;
         }
+        h1:first-of-type {
+            font-family: 'Lora', serif;
+        }
+        form {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
     </style>
 </head>
-<body style="background-color:lightBlue;">
-    <h1>Web Development: Minor Project</h1>
-
-    
-    <h1>Student Information Form</h1>
-    <form id="student-form">
+<body>
+    <h1>Development Minor Project</h1>
+    <h2>Student Information Form</h2>
+    <form id="studentForm">
         <label for="rollNo">Roll No:</label>
-        <input type="text" id="rollNo" name="rollNo" required><br>
+        <input type="text" id="rollNo" name="rollNo" placeholder="Enter Roll No" required>
 
         <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br>
+        <input type="text" id="name" name="name" placeholder="Enter Name" required>
 
         <label for="degree">Degree:</label>
-        <input type="text" id="degree" name="degree" required><br>
+        <input type="text" id="degree" name="degree" placeholder="Enter Degree" required>
 
         <label for="city">City:</label>
-        <input type="text" id="city" name="city" required><br>
+        <input type="text" id="city" name="city" placeholder="Enter City" required>
 
         <button type="submit">Submit</button>
+        <button type="button" id="removeAll">Remove All</button>
     </form>
 
     <h2>Student Records</h2>
-    <table border="1" id="student-table">
+    <table>
         <thead>
             <tr>
                 <th>Roll No</th>
@@ -42,10 +98,47 @@
                 <th>City</th>
             </tr>
         </thead>
-        <tbody>
-            <!-- Rows will be dynamically added here -->
+        <tbody id="studentTable">
         </tbody>
     </table>
-    <script src="/script.js"></script>
+
+    <script>
+        const studentForm = document.getElementById('studentForm');
+        const studentTable = document.getElementById('studentTable');
+        const removeAllButton = document.getElementById('removeAll');
+
+        studentForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const rollNo = document.getElementById('rollNo').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const degree = document.getElementById('degree').value.trim();
+            const city = document.getElementById('city').value.trim();
+
+            if (rollNo && name && degree && city) {
+                const newRow = studentTable.insertRow();
+
+                const rollNoCell = newRow.insertCell(0);
+                const nameCell = newRow.insertCell(1);
+                const degreeCell = newRow.insertCell(2);
+                const cityCell = newRow.insertCell(3);
+
+                rollNoCell.textContent = rollNo;
+                nameCell.textContent = name;
+                degreeCell.textContent = degree;
+                cityCell.textContent = city;
+
+                document.getElementById('rollNo').value = '';
+                document.getElementById('name').value = '';
+                document.getElementById('degree').value = '';
+                document.getElementById('city').value = '';
+            } else {
+                alert('Please fill in all fields.');
+            }
+        });
+
+        removeAllButton.addEventListener('click', function() {
+            studentTable.innerHTML = '';
+        });
+    </script>
 </body>
 </html>
