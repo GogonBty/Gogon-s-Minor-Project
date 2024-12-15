@@ -66,10 +66,18 @@
         tbody tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+        .credit {
+            position: fixed;
+            right: 20px;
+            bottom: 10px;
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            color: #2c3e50;
+        }
     </style>
 </head>
-<body>
-    <h1>Web Development: Minor Project</h1>
+<body>  <marquee>Welcome to my project</marquee>
+    <h1>Web Development'24: Minor Project</h1>
     <h2>Student Information Form</h2>
     <form id="studentForm">
         <label for="rollNo">Roll No:</label>
@@ -140,6 +148,8 @@
             studentTable.innerHTML = '';
         });
     </script>
-    <marquee>Welcome to my project</marquee>
+  
+
+    <div class="credit">- Gogon Basumatary</div>
 </body>
 </html>
